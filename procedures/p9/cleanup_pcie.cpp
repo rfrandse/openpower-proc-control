@@ -1,5 +1,5 @@
 /**
- * Copyright © 2018 IBM Corporation
+ * Copyright (C) 2018 IBM Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <phosphor-logging/log.hpp>
 #include "cfam_access.hpp"
 #include "p9_cfam.hpp"
 #include "registration.hpp"
 #include "targeting.hpp"
+
+#include <phosphor-logging/log.hpp>
 
 namespace openpower
 {
@@ -36,15 +37,17 @@ using namespace openpower::targeting;
 void cleanupPcie()
 {
     Targeting targets;
-    const auto& master = *(targets.begin());
 
     log<level::INFO>("Running P9 procedure cleanupPcie");
 
-    // Disable the PCIE drivers and receiver
-    writeReg(master, P9_ROOT_CTRL1_CLEAR, 0x00001C00);
+    // Disable the PCIE drivers and receiver on all CPUs
+    for (const auto& target : targets)
+    {
+        writeReg(target, P9_ROOT_CTRL1_CLEAR, 0x00001C00);
+    }
 }
 
 REGISTER_PROCEDURE("cleanupPcie", cleanupPcie);
 
-}
-}
+} // namespace p9
+} // namespace openpower
