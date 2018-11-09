@@ -1,6 +1,7 @@
 [Unit]
 Description=POWER9 PCIe Power-off Workaround
 Before=op-power-stop@%i.service
+After=obmc-power-stop-pre@%i.target
 
 [Service]
 Type=oneshot
